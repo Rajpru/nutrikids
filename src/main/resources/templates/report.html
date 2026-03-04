@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'NutriKids Report - ' + ${report.childName}">NutriKids - Nutrition Report</title>
+    <meta name="description"
+        content="Personalized child nutrition report with BMI analysis, food recommendations and diet plan.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/report.css}">
+</head>
+
+<body class="report-page">
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="/" class="nav-brand">
+            <span class="logo-icon">🥦</span>
+            <span class="logo-text">NutriKids</span>
+        </a>
+        <a href="/" class="btn-nav">← New Analysis</a>
+    </nav>
+
+    <div class="report-container">
+
+        <!-- =============== REPORT HEADER =============== -->
+        <div class="report-header">
+            <div class="report-header-content">
+                <div class="child-avatar">
+                    <span th:text="${report.gender == 'MALE' ? '👦' : '👧'}">👦</span>
+                </div>
+                <div class="child-info">
+                    <h1 th:text="${report.childName + &quot;'s Nutrition Report&quot;}">Report</h1>
+                    <div class="child-meta">
+                        <span>📅 Age: <strong th:text="${report.ageYears + ' years'}"></strong></span>
+                        <span>⚖️ Weight: <strong th:text="${report.weightKg + ' kg'}"></strong></span>
+                        <span>📏 Height: <strong th:text="${report.heightCm + ' cm'}"></strong></span>
+                        <span th:text="${report.gender == 'MALE' ? '♂️ Male' : '♀️ Female'}"></span>
+                    </div>
+                </div>
+                <div class="health-score-badge"
+                    th:classappend="${'score-' + report.overallHealthScore.replace('+','plus')}">
+                    <div class="score-label">Health Score</div>
+                    <div class="score-value" th:text="${report.overallHealthScore}">A+</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =============== BMI SECTION =============== -->
+        <section class="report-section">
+            <div class="section-title">
+                <span class="section-icon">📊</span>
+                <h2>BMI Analysis</h2>
+            </div>
+            <div class="bmi-grid">
+                <!-- BMI Card -->
+                <div class="bmi-card" th:classappend="${'status-' + report.bmiStatus.toLowerCase()}">
+                    <div class="bmi-main">
+                        <div class="bmi-label">Body Mass Index (BMI)</div>
+                        <div class="bmi-value" th:text="${report.bmi}">22.5</div>
+                        <div class="bmi-unit">kg/m²</div>
+                    </div>
+                    <div class="bmi-badge" th:text="${report.bmiCategory}">Healthy Weight</div>
+                    <div class="bmi-percentile">
+                        <span>BMI Percentile:</span>
+                        <strong th:text="${report.bmiPercentile + 'th'}">55th</strong>
+                    </div>
+                </div>
+
+                <!-- BMI Scale Visual -->
+                <div class="bmi-scale-card">
+                    <div class="scale-title">BMI Percentile Scale (Age-Specific)</div>
+                    <div class="bmi-scale">
+                        <div class="scale-bar">
+                            <div class="scale-segment seg-under">
+                                <span>Underweight</span>
+                                <span>&lt; 5th</span>
+                            </div>
+                            <div class="scale-segment seg-healthy">
+                                <span>Healthy</span>
+                                <span>5th-84th</span>
+                            </div>
+                            <div class="scale-segment seg-over">
+                                <span>Overweight</span>
+                                <span>85th-94th</span>
+                            </div>
+                            <div class="scale-segment seg-obese">
+                                <span>Obese</span>
+                                <span>&gt; 95th</span>
+                            </div>
+                        </div>
+                        <div class="scale-marker-container">
+                            <div class="scale-marker"
+                                th:style="'left: ' + ${#numbers.formatDecimal(report.bmiPercentile, 1, 1) + '%'}">
+                                <span class="marker-tip" th:text="${report.bmiPercentile + ''}">55</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bmi-interpretation" th:text="${report.bmiInterpretation}"></div>
+                </div>
+
+                <!-- Growth Status -->
+                <div class="growth-card">
+                    <div class="growth-title">Growth Status</div>
+                    <div class="growth-status-badge" th:text="${report.growthStatus}">Normal Growth</div>
+                    <div class="growth-stats">
+                        <div class="growth-stat">
+                            <span class="gs-label">Optimal Weight</span>
+                            <span class="gs-value" th:text="${report.optimalWeightKg + ' kg'}">25 kg</span>
+                        </div>
+                        <div class="growth-stat">
+                            <span class="gs-label">Your Weight</span>
+                            <span class="gs-value" th:text="${report.weightKg + ' kg'}">26 kg</span>
+                        </div>
+                        <div class="growth-stat">
+                            <span class="gs-label">Weight Difference</span>
+                            <span class="gs-value diff"
+                                th:text="${(report.weightDifferenceKg > 0 ? '+' : '') + report.weightDifferenceKg + ' kg'}">+1
+                                kg</span>
+                        </div>
+                        <div class="growth-stat">
+                            <span class="gs-label">Optimal Height</span>
+                            <span class="gs-value" th:text="${report.optimalHeightCm + ' cm'}">130 cm</span>
+                        </div>
+                        <div class="growth-stat">
+                            <span class="gs-label">Height vs. Standard</span>
+                            <span class="gs-value" th:text="${report.heightDifferencePercent + '%'}">98%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doctor Referral -->
+            <div class="doctor-card"
+                th:classappend="${report.doctorReferral.startsWith('URGENT') ? 'referral-urgent' : report.doctorReferral.startsWith('RECOMMENDED') ? 'referral-recommended' : 'referral-routine'}">
+                <span class="doctor-icon">🩺</span>
+                <div>
+                    <div class="doctor-label">Medical Consultation</div>
+                    <div class="doctor-text" th:text="${report.doctorReferral}"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =============== CALORIE & NUTRIENTS =============== -->
+        <section class="report-section">
+            <div class="section-title">
+                <span class="section-icon">⚡</span>
+                <h2>Daily Nutritional Requirements</h2>
+            </div>
+            <div class="nutrients-grid">
+                <div class="calorie-card">
+                    <div class="cal-icon">🔥</div>
+                    <div class="cal-range">
+                        <span class="cal-min" th:text="${report.dailyCaloriesMin}">1400</span>
+                        <span class="cal-sep">–</span>
+                        <span class="cal-max" th:text="${report.dailyCaloriesMax}">1600</span>
+                    </div>
+                    <div class="cal-label">Daily Calories (kcal)</div>
+                </div>
+
+                <div class="macro-card macro-protein">
+                    <div class="macro-icon">🥩</div>
+                    <div class="macro-value" th:text="${report.proteinGrams + 'g'}">65g</div>
+                    <div class="macro-name">Protein</div>
+                    <div class="macro-desc">~17% of calories</div>
+                </div>
+
+                <div class="macro-card macro-carbs">
+                    <div class="macro-icon">🍚</div>
+                    <div class="macro-value" th:text="${report.carbsGrams + 'g'}">195g</div>
+                    <div class="macro-name">Carbohydrates</div>
+                    <div class="macro-desc">~52% of calories</div>
+                </div>
+
+                <div class="macro-card macro-fats">
+                    <div class="macro-icon">🥑</div>
+                    <div class="macro-value" th:text="${report.fatsGrams + 'g'}">45g</div>
+                    <div class="macro-name">Healthy Fats</div>
+                    <div class="macro-desc">~31% of calories</div>
+                </div>
+
+                <div class="micro-card">
+                    <div class="micro-icon">🦴</div>
+                    <div class="micro-value" th:text="${report.calciumMg + ' mg'}">1000 mg</div>
+                    <div class="micro-name">Calcium</div>
+                    <div class="micro-tip">Milk, dairy, green leaves</div>
+                </div>
+
+                <div class="micro-card">
+                    <div class="micro-icon">🩸</div>
+                    <div class="micro-value" th:text="${report.ironMg + ' mg'}">10 mg</div>
+                    <div class="micro-name">Iron</div>
+                    <div class="micro-tip">Lentils, spinach, red meat</div>
+                </div>
+
+                <div class="micro-card">
+                    <div class="micro-icon">☀️</div>
+                    <div class="micro-value" th:text="${report.vitaminDIu + ' IU'}">600 IU</div>
+                    <div class="micro-name">Vitamin D</div>
+                    <div class="micro-tip">Sunlight, fish, fortified milk</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =============== SUPERFOODS =============== -->
+        <section class="report-section">
+            <div class="section-title">
+                <span class="section-icon">⭐</span>
+                <h2>Superfoods for Your Child</h2>
+            </div>
+            <div class="food-grid" id="superfoods-grid">
+                <div th:each="food : ${report.superfoodsForChild}" class="food-card superfood-card">
+                    <div class="food-emoji" th:text="${food.emoji}">🥚</div>
+                    <div class="food-name" th:text="${food.name}">Eggs</div>
+                    <div class="food-category" th:text="${food.category}">Protein</div>
+                    <div class="food-nutrients">
+                        <span class="nutrient-tag" th:text="${food.calories + ' kcal'}">155 kcal</span>
+                        <span class="nutrient-tag protein-tag" th:text="${food.protein + 'g protein'}">13g
+                            protein</span>
+                    </div>
+                    <div class="food-benefit" th:text="${food.benefit}">Great for growth</div>
+                    <div class="food-tip">
+                        <span class="tip-icon">💡</span>
+                        <span th:text="${food.preparationTip}">Preparation tip</span>
+                    </div>
+                    <div class="food-frequency">
+                        <span>Recommended:</span>
+                        <strong th:text="${food.recommendationsPerWeek + 'x/week'}">5x/week</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =============== RECOMMENDED FOODS =============== -->
+        <section class="report-section">
+            <div class="section-title">
+                <span class="section-icon">✅</span>
+                <h2>Recommended Foods</h2>
+                <span class="section-badge">Personalized for your child</span>
+            </div>
+            <div class="food-grid">
+                <div th:each="food : ${report.recommendedFoods}" class="food-card rec-card">
+                    <div class="food-emoji" th:text="${food.emoji}">🥦</div>
+                    <div class="food-name" th:text="${food.name}">Broccoli</div>
+                    <div class="food-category" th:text="${food.category}">Vegetables</div>
+                    <div class="food-nutrients">
+                        <span class="nutrient-tag" th:text="${food.calories + ' kcal'}"></span>
+                        <span class="nutrient-tag" th:text="${food.servingSize}"></span>
+                    </div>
+                    <div class="food-benefit" th:text="${food.benefit}"></div>
+                    <div class="food-key-nutrients">
+                        <span class="kn-label">Key Nutrients:</span>
+                        <span th:text="${food.keyNutrients}"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =============== FOODS TO AVOID =============== -->
+        <section class="report-section" th:if="${report.foodsToAvoid != null and !report.foodsToAvoid.isEmpty()}">
+            <div class="section-title">
+                <span class="section-icon">🚫</span>
+                <h2>Foods to Avoid or Limit</h2>
+            </div>
+            <div class="avoid-grid">
+                <div th:each="food : ${report.foodsToAvoid}" class="avoid-card">
+                    <div class="avoid-emoji" th:text="${food.emoji}">🍔</div>
+                    <div>
+                        <div class="avoid-name" th:text="${food.name}">Fast Food</div>
+                        <div class="avoid-reason" th:text="${food.benefit}">Reason to avoid</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =============== 7-DAY DIET PLAN =============== -->
+        <section class="report-section">
+            <div class="section-title">
+                <span class="section-icon">📅</span>
+                <h2>7-Day Personalized Diet Plan</h2>
+            </div>
+
+            <div class="diet-plan-header">
+                <div class="plan-info">
+                    <span class="plan-name" th:text="${report.weeklyDietPlan.planName}">Plan Name</span>
+                    <span class="plan-goal">🎯 <span th:text="${report.weeklyDietPlan.targetGoal}">Goal</span></span>
+                    <span class="plan-cal">🔥 ~<span th:text="${report.weeklyDietPlan.totalDailyCalories}">1500</span>
+                        kcal/day</span>
+                </div>
+            </div>
+
+            <!-- Day Tabs -->
+            <div class="day-tabs">
+                <button class="day-tab active" onclick="showDay('Monday', this)">Mon</button>
+                <button class="day-tab" onclick="showDay('Tuesday', this)">Tue</button>
+                <button class="day-tab" onclick="showDay('Wednesday', this)">Wed</button>
+                <button class="day-tab" onclick="showDay('Thursday', this)">Thu</button>
+                <button class="day-tab" onclick="showDay('Friday', this)">Fri</button>
+                <button class="day-tab" onclick="showDay('Saturday', this)">Sat</button>
+                <button class="day-tab" onclick="showDay('Sunday', this)">Sun</button>
+            </div>
+
+            <!-- Day Meal Cards -->
+            <div th:each="entry : ${report.weeklyDietPlan.weeklyPlan}" class="day-plan" th:id="'day-' + ${entry.key}"
+                th:classappend="${entry.key == 'Monday' ? ' active-day' : ''}">
+
+                <div class="day-header">
+                    <h3 th:text="${entry.key}">Monday</h3>
+                    <span class="day-calories">Total: <strong th:text="${entry.value.totalCalories + ' kcal'}">1500
+                            kcal</strong></span>
+                </div>
+
+                <div class="meals-timeline">
+                    <!-- Breakfast -->
+                    <div class="meal-item" th:if="${entry.value.breakfast != null}">
+                        <div class="meal-time-badge breakfast-badge">🌅 Breakfast</div>
+                        <div class="meal-content">
+                            <div class="meal-name">
+                                <span th:text="${entry.value.breakfast.emoji}">🥣</span>
+                                <span th:text="${entry.value.breakfast.name}">Breakfast</span>
+                                <span class="meal-cal-tag" th:text="${entry.value.breakfast.calories + ' kcal'}"></span>
+                            </div>
+                            <ul class="meal-items-list">
+                                <li th:each="item : ${entry.value.breakfast.items}" th:text="${item}"></li>
+                            </ul>
+                            <div class="portion-note" th:text="${entry.value.breakfast.portionNote}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Morning Snack -->
+                    <div class="meal-item" th:if="${entry.value.morningSnack != null}">
+                        <div class="meal-time-badge snack-badge">☀️ Morning Snack</div>
+                        <div class="meal-content">
+                            <div class="meal-name">
+                                <span th:text="${entry.value.morningSnack.emoji}">🍎</span>
+                                <span th:text="${entry.value.morningSnack.name}">Snack</span>
+                                <span class="meal-cal-tag"
+                                    th:text="${entry.value.morningSnack.calories + ' kcal'}"></span>
+                            </div>
+                            <ul class="meal-items-list">
+                                <li th:each="item : ${entry.value.morningSnack.items}" th:text="${item}"></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Lunch -->
+                    <div class="meal-item" th:if="${entry.value.lunch != null}">
+                        <div class="meal-time-badge lunch-badge">🌞 Lunch</div>
+                        <div class="meal-content">
+                            <div class="meal-name">
+                                <span th:text="${entry.value.lunch.emoji}">🍛</span>
+                                <span th:text="${entry.value.lunch.name}">Lunch</span>
+                                <span class="meal-cal-tag" th:text="${entry.value.lunch.calories + ' kcal'}"></span>
+                            </div>
+                            <ul class="meal-items-list">
+                                <li th:each="item : ${entry.value.lunch.items}" th:text="${item}"></li>
+                            </ul>
+                            <div class="portion-note" th:text="${entry.value.lunch.portionNote}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Evening Snack -->
+                    <div class="meal-item" th:if="${entry.value.eveningSnack != null}">
+                        <div class="meal-time-badge snack-badge">🌤️ Evening Snack</div>
+                        <div class="meal-content">
+                            <div class="meal-name">
+                                <span th:text="${entry.value.eveningSnack.emoji}">🥛</span>
+                                <span th:text="${entry.value.eveningSnack.name}">Snack</span>
+                                <span class="meal-cal-tag"
+                                    th:text="${entry.value.eveningSnack.calories + ' kcal'}"></span>
+                            </div>
+                            <ul class="meal-items-list">
+                                <li th:each="item : ${entry.value.eveningSnack.items}" th:text="${item}"></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Dinner -->
+                    <div class="meal-item" th:if="${entry.value.dinner != null}">
+                        <div class="meal-time-badge dinner-badge">🌙 Dinner</div>
+                        <div class="meal-content">
+                            <div class="meal-name">
+                                <span th:text="${entry.value.dinner.emoji}">🫓</span>
+                                <span th:text="${entry.value.dinner.name}">Dinner</span>
+                                <span class="meal-cal-tag" th:text="${entry.value.dinner.calories + ' kcal'}"></span>
+                            </div>
+                            <ul class="meal-items-list">
+                                <li th:each="item : ${entry.value.dinner.items}" th:text="${item}"></li>
+                            </ul>
+                            <div class="portion-note" th:text="${entry.value.dinner.portionNote}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meal Guidelines -->
+            <div class="meal-guidelines">
+                <div class="guideline-col">
+                    <h4>⏰ Meal Timing</h4>
+                    <ul>
+                        <li th:each="tip : ${report.weeklyDietPlan.mealTimingTips}" th:text="${tip}"></li>
+                    </ul>
+                </div>
+                <div class="guideline-col">
+                    <h4>💧 Hydration</h4>
+                    <ul>
+                        <li th:each="tip : ${report.weeklyDietPlan.hydrationAdvice}" th:text="${tip}"></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="snacking-box">
+                <span class="snacking-icon">🍎</span>
+                <div>
+                    <strong>Snacking Guidelines</strong>
+                    <p th:text="${report.weeklyDietPlan.snackingGuidelines}"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =============== HEALTH TIPS =============== -->
+        <section class="report-section">
+            <div class="section-title">
+                <span class="section-icon">💡</span>
+                <h2>Health Tips & Recommendations</h2>
+            </div>
+            <div class="tips-grid">
+                <div th:each="tip : ${report.healthTips}" class="tip-card">
+                    <span th:text="${tip}"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- =============== PARENTING ADVICE =============== -->
+        <section class="report-section">
+            <div class="section-title">
+                <span class="section-icon">👨‍👩‍👧</span>
+                <h2>Parenting Nutrition Advice</h2>
+            </div>
+            <div class="advice-grid">
+                <div th:each="advice : ${report.parentingAdvice}" class="advice-card">
+                    <span th:text="${advice}"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- =============== CTA =============== -->
+        <div class="report-cta">
+            <a href="/" class="btn-submit"
+                style="text-decoration:none; display:inline-flex; gap:8px; align-items:center;">
+                <span>Analyze Another Child</span> <span>🔄</span>
+            </a>
+            <button onclick="window.print()" class="btn-print">🖨️ Print Report</button>
+        </div>
+
+    </div><!-- end report-container -->
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand"><span class="logo-icon">🥦</span><span class="logo-text">NutriKids</span>
+                </div>
+                <p class="footer-disclaimer">Based on WHO & CDC Growth Standards. Not a substitute for medical advice.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function showDay(dayName, btn) {
+            // Hide all days
+            document.querySelectorAll('.day-plan').forEach(d => d.classList.remove('active-day'));
+            document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+            // Show selected
+            const dayEl = document.getElementById('day-' + dayName);
+            if (dayEl) dayEl.classList.add('active-day');
+            btn.classList.add('active');
+        }
+
+        // Animate BMI scale marker
+        document.addEventListener('DOMContentLoaded', function () {
+            const marker = document.querySelector('.scale-marker');
+            if (marker) {
+                marker.style.opacity = '0';
+                setTimeout(() => {
+                    marker.style.opacity = '1';
+                    marker.style.transition = 'all 1s ease';
+                }, 500);
+            }
+
+            // Animate food cards
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.food-card, .tip-card, .advice-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.4s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+
+</html>

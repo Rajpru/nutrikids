@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriKids - Child Nutrition & Growth Analyzer</title>
+    <meta name="description" content="NutriKids helps parents assess their child's BMI, compare with WHO growth standards, and get personalized diet plans and food recommendations.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo-icon">🥦</span>
+            <span class="logo-text">NutriKids</span>
+        </div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#form-section" class="btn-nav">Analyze Now</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg-orbs">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge">🏥 WHO & CDC Growth Standards</div>
+            <h1 class="hero-title">
+                Smart Nutrition
+                <span class="gradient-text">for Growing Kids</span>
+            </h1>
+            <p class="hero-subtitle">
+                Enter your child's height, weight & age to get a comprehensive BMI analysis,
+                personalized food recommendations, and a 7-day diet plan — all based on
+                internationally recognized growth standards.
+            </p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">200+</span>
+                    <span class="stat-label">Food Items Analyzed</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number">7-Day</span>
+                    <span class="stat-label">Personalized Diet Plan</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number">WHO</span>
+                    <span class="stat-label">Standards Based</span>
+                </div>
+            </div>
+            <a href="#form-section" class="btn-hero">
+                <span>Start Free Analysis</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+        <div class="hero-visual">
+            <div class="floating-card card-bmi">
+                <div class="fc-icon">📊</div>
+                <div class="fc-content">
+                    <div class="fc-title">BMI Analysis</div>
+                    <div class="fc-sub">Age-specific percentiles</div>
+                </div>
+            </div>
+            <div class="floating-card card-food">
+                <div class="fc-icon">🥗</div>
+                <div class="fc-content">
+                    <div class="fc-title">Food Suggestions</div>
+                    <div class="fc-sub">Personalized & nutritious</div>
+                </div>
+            </div>
+            <div class="floating-card card-plan">
+                <div class="fc-icon">📅</div>
+                <div class="fc-content">
+                    <div class="fc-title">7-Day Diet Plan</div>
+                    <div class="fc-sub">Complete meal schedule</div>
+                </div>
+            </div>
+            <div class="hero-circle">
+                <span class="hero-emoji-big">👶</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Everything Your Child Needs</h2>
+                <p>Science-backed nutrition analysis designed for growing children</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>BMI Analysis</h3>
+                    <p>Calculate age and gender-specific BMI percentiles based on CDC growth charts for children aged 1-18.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📏</div>
+                    <h3>Growth Comparison</h3>
+                    <p>Compare your child's height and weight against WHO standard growth curves to detect any growth concerns.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🥑</div>
+                    <h3>Food Recommendations</h3>
+                    <p>Get 12+ personalized food suggestions with nutritional details tailored to your child's specific needs.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🗓️</div>
+                    <h3>7-Day Diet Plan</h3>
+                    <p>A complete week of breakfast, snacks, lunch, and dinner meals optimized for your child's calorie needs.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💊</div>
+                    <h3>Nutrient Targets</h3>
+                    <p>Specific daily targets for protein, carbs, fats, calcium, iron, and vitamin D based on age and gender.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>Health Tips</h3>
+                    <p>Expert parenting advice, sleep recommendations, activity guidelines, and a doctor referral assessment.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Three simple steps to your child's nutrition plan</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">✏️</div>
+                    <h4>Enter Details</h4>
+                    <p>Input your child's name, age, height, weight, and gender.</p>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">🔬</div>
+                    <h4>AI Analysis</h4>
+                    <p>Our system analyzes growth data against WHO/CDC standards.</p>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">📋</div>
+                    <h4>Get Report</h4>
+                    <p>Receive a complete nutrition report with personalized recommendations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Form Section -->
+    <section class="form-section" id="form-section">
+        <div class="container">
+            <div class="form-wrapper">
+                <div class="form-header">
+                    <div class="form-icon">🧒</div>
+                    <h2>Child Nutrition Analyzer</h2>
+                    <p>Fill in your child's details for a comprehensive nutrition assessment</p>
+                </div>
+
+                <!-- Error Messages -->
+                <div th:if="${errors}" class="error-container">
+                    <div th:each="error : ${errors}" class="error-item">
+                        ⚠️ <span th:text="${error.defaultMessage}"></span>
+                    </div>
+                </div>
+
+                <form id="nutritionForm" action="/analyze" method="post" th:object="${childProfile}">
+
+                    <div class="form-grid">
+                        <!-- Child's Name -->
+                        <div class="form-group full-width">
+                            <label for="name">
+                                <span class="label-icon">👤</span>
+                                Child's Name
+                            </label>
+                            <input type="text" id="name" th:field="*{name}"
+                                   placeholder="e.g., Arjun Kumar" class="form-input" required>
+                            <span class="input-hint">Enter the child's first or full name</span>
+                        </div>
+
+                        <!-- Age -->
+                        <div class="form-group">
+                            <label for="ageInYears">
+                                <span class="label-icon">🎂</span>
+                                Age (Years)
+                            </label>
+                            <input type="number" id="ageInYears" th:field="*{ageInYears}"
+                                   placeholder="e.g., 8" min="1" max="18" class="form-input" required>
+                            <span class="input-hint">Between 1 and 18 years</span>
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="form-group">
+                            <label for="gender">
+                                <span class="label-icon">⚧️</span>
+                                Gender
+                            </label>
+                            <select id="gender" th:field="*{gender}" class="form-input form-select" required>
+                                <option value="">-- Select Gender --</option>
+                                <option value="MALE">👦 Male</option>
+                                <option value="FEMALE">👧 Female</option>
+                            </select>
+                        </div>
+
+                        <!-- Weight -->
+                        <div class="form-group">
+                            <label for="weightKg">
+                                <span class="label-icon">⚖️</span>
+                                Weight (kg)
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" id="weightKg" th:field="*{weightKg}"
+                                       placeholder="e.g., 28.5" min="2" max="150" step="0.1" class="form-input" required>
+                                <span class="unit-badge">kg</span>
+                            </div>
+                            <span class="input-hint">In kilograms (e.g., 28.5)</span>
+                        </div>
+
+                        <!-- Height -->
+                        <div class="form-group">
+                            <label for="heightCm">
+                                <span class="label-icon">📏</span>
+                                Height (cm)
+                            </label>
+                            <div class="input-with-unit">
+                                <input type="number" id="heightCm" th:field="*{heightCm}"
+                                       placeholder="e.g., 128.0" min="40" max="220" step="0.1" class="form-input" required>
+                                <span class="unit-badge">cm</span>
+                            </div>
+                            <span class="input-hint">In centimeters (e.g., 128.0)</span>
+                        </div>
+
+                        <!-- Activity Level -->
+                        <div class="form-group full-width">
+                            <label>
+                                <span class="label-icon">🏃</span>
+                                Activity Level
+                            </label>
+                            <div class="radio-group">
+                                <label class="radio-card" id="label-low">
+                                    <input type="radio" name="activityLevel" th:field="*{activityLevel}" value="LOW">
+                                    <span class="radio-icon">🛋️</span>
+                                    <span class="radio-label">Low</span>
+                                    <span class="radio-desc">Mostly indoor, sedentary</span>
+                                </label>
+                                <label class="radio-card" id="label-moderate">
+                                    <input type="radio" name="activityLevel" th:field="*{activityLevel}" value="MODERATE" checked>
+                                    <span class="radio-icon">🚶</span>
+                                    <span class="radio-label">Moderate</span>
+                                    <span class="radio-desc">Regular play & walks</span>
+                                </label>
+                                <label class="radio-card" id="label-high">
+                                    <input type="radio" name="activityLevel" th:field="*{activityLevel}" value="HIGH">
+                                    <span class="radio-icon">⚽</span>
+                                    <span class="radio-label">High</span>
+                                    <span class="radio-desc">Sports & vigorous activity</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live BMI Preview -->
+                    <div class="bmi-preview" id="bmiPreview" style="display:none;">
+                        <div class="preview-label">Live BMI Preview</div>
+                        <div class="preview-bmi" id="previewBmiValue">--</div>
+                        <div class="preview-note">Submit the form for full analysis</div>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        <span class="btn-text">Analyze Nutrition Now</span>
+                        <span class="btn-icon">🔍</span>
+                        <div class="btn-loader" id="btnLoader"></div>
+                    </button>
+                </form>
+
+                <div class="form-disclaimer">
+                    <span>🔒</span>
+                    <p>All data is processed locally and not stored. This tool provides general educational guidance and is not a substitute for professional medical advice.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo-icon">🥦</span>
+                    <span class="logo-text">NutriKids</span>
+                </div>
+                <p class="footer-disclaimer">
+                    Based on WHO Child Growth Standards and CDC Growth Charts. For medical concerns, always consult a qualified pediatrician.
+                </p>
+                <p class="footer-copy">© 2025 NutriKids. Built with ❤️ for healthier children.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Live BMI Calculator
+        const weightInput = document.getElementById('weightKg');
+        const heightInput = document.getElementById('heightCm');
+        const bmiPreview = document.getElementById('bmiPreview');
+        const bmiValueEl = document.getElementById('previewBmiValue');
+
+        function updateBmiPreview() {
+            const w = parseFloat(weightInput.value);
+            const h = parseFloat(heightInput.value);
+            if (w > 0 && h > 0) {
+                const bmi = (w / ((h / 100) ** 2)).toFixed(1);
+                bmiValueEl.textContent = bmi;
+                bmiPreview.style.display = 'flex';
+            } else {
+                bmiPreview.style.display = 'none';
+            }
+        }
+
+        weightInput?.addEventListener('input', updateBmiPreview);
+        heightInput?.addEventListener('input', updateBmiPreview);
+
+        // Form submit loading state
+        document.getElementById('nutritionForm')?.addEventListener('submit', function() {
+            const btn = document.getElementById('submitBtn');
+            btn.classList.add('loading');
+            btn.querySelector('.btn-text').textContent = 'Analyzing...';
+        });
+
+        // Radio card active state
+        document.querySelectorAll('.radio-card input').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('active'));
+                if (this.checked) this.closest('.radio-card').classList.add('active');
+            });
+        });
+        // Set initial active
+        document.querySelectorAll('.radio-card input:checked').forEach(r => {
+            r.closest('.radio-card').classList.add('active');
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
