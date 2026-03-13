@@ -369,15 +369,126 @@ form { padding: 40px; }
 .footer-copy { font-size: 0.8rem; color: var(--text-muted); opacity: 0.7; }
 
 /* ================================================
-   RESPONSIVE
+   HAMBURGER MENU (mobile nav toggle)
+   ================================================ */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+}
+.hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text-primary);
+    border-radius: 2px;
+    transition: var(--transition);
+}
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* Mobile drawer */
+.mobile-nav {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    position: fixed;
+    top: 60px; left: 0; right: 0;
+    background: rgba(15,17,23,0.97);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    z-index: 999;
+    padding: 12px 0;
+    transform: translateY(-10px);
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition);
+}
+.mobile-nav.open {
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+.mobile-nav a {
+    padding: 14px 28px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    border-bottom: 1px solid var(--border);
+    transition: var(--transition);
+}
+.mobile-nav a:last-child { border-bottom: none; }
+.mobile-nav a:hover, .mobile-nav a.btn-nav { color: var(--primary); }
+
+/* ================================================
+   RESPONSIVE — TABLET (≤900px)
    ================================================ */
 @media (max-width: 900px) {
-    .hero { flex-direction: column; text-align: center; padding: 100px 20px 60px; }
-    .hero-content { padding: 0; max-width: 100%; }
-    .hero-visual { min-height: 300px; }
     .navbar { padding: 14px 20px; }
     .nav-links a:not(.btn-nav) { display: none; }
+    .hamburger { display: flex; }
+
+    .hero { flex-direction: column; text-align: center; padding: 100px 20px 60px; }
+    .hero-content { padding: 0; max-width: 100%; }
+    .hero-visual { min-height: 280px; }
     .hero-stats { justify-content: center; }
+
     .form-grid { grid-template-columns: 1fr; }
+    .radio-group { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ================================================
+   RESPONSIVE — LARGE MOBILE (≤600px)
+   ================================================ */
+@media (max-width: 600px) {
+    .hero { padding: 90px 16px 50px; }
+    .hero-visual { display: none; }   /* hide floating cards on small screens */
+    .hero-title { font-size: 2rem; }
+    .hero-subtitle { font-size: 0.95rem; }
+    .hero-stats { flex-wrap: wrap; gap: 16px; }
+    .stat-divider { display: none; }
+
+    .features { padding: 60px 0; }
+    .features-grid { grid-template-columns: 1fr; }
+    .section-header h2 { font-size: 1.7rem; }
+
+    .how-it-works { padding: 60px 0; }
+    .steps { flex-direction: column; align-items: center; gap: 12px; }
+    .step-connector { width: 2px; height: 32px; max-width: unset;
+        background: linear-gradient(180deg, transparent, var(--primary), transparent);
+        margin: 0; }
+
+    .form-section { padding: 60px 0; }
+    form { padding: 24px; }
+    .form-header { padding: 24px; }
+    .form-header h2 { font-size: 1.4rem; }
     .radio-group { grid-template-columns: 1fr; }
+    .form-disclaimer { padding: 16px 24px 24px; }
+
+    .btn-hero { padding: 14px 24px; font-size: 0.95rem; }
+    .btn-submit { font-size: 1rem; padding: 16px; }
+
+    .footer { padding: 28px 0; }
+}
+
+/* ================================================
+   RESPONSIVE — SMALL MOBILE (≤400px)
+   ================================================ */
+@media (max-width: 400px) {
+    .navbar { padding: 12px 14px; }
+    .logo-text { font-size: 1.1rem; }
+    .hero-title { font-size: 1.65rem; }
+    .hero-badge { font-size: 0.75rem; padding: 5px 12px; }
+    .container { padding: 0 14px; }
+    .feature-card { padding: 24px 18px; }
+    form { padding: 16px; }
+    .form-header { padding: 20px 16px; }
+    .form-disclaimer { padding: 12px 16px 20px; }
 }
