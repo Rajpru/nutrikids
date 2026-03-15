@@ -79,14 +79,16 @@ public class NutritionController {
     public ResponseEntity<Map<String, Object>> getFoodRecommendations(
             @RequestParam String bmiCategory,
             @RequestParam int age,
-            @RequestParam String gender) {
+            @RequestParam String gender,
+            @RequestParam double weight,
+            @RequestParam double height) {
 
         UserProfile profile = new UserProfile();
         profile.setName("Query");
         profile.setAgeInYears(age);
         profile.setGender(gender.toUpperCase());
-        profile.setWeightKg(70.0);
-        profile.setHeightCm(170.0);
+        profile.setWeightKg(weight);
+        profile.setHeightCm(height);
 
         NutritionReport report = nutritionService.analyzeChild(profile);
 

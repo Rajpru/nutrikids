@@ -356,12 +356,12 @@
 
     <script>
         // Live BMI Calculator
-        const weightInput = document.getElementById('weightKg');
-        const heightInput = document.getElementById('heightCm');
-        const ageInput    = document.getElementById('ageInYears');
-        const bmiPreview  = document.getElementById('bmiPreview');
-        const bmiValueEl  = document.getElementById('previewBmiValue');
-        const ageHint     = document.getElementById('ageHint');
+        const weightInput  = document.getElementById('weightKg');
+        const heightInput  = document.getElementById('heightCm');
+        const ageInput     = document.getElementById('ageInYears');
+        const genderSelect = document.getElementById('gender');
+        const bmiPreview   = document.getElementById('bmiPreview');
+        const bmiValueEl   = document.getElementById('previewBmiValue');
         const ageTypeBadge = document.getElementById('ageTypeBadge');
 
         function getUserType(age) {
@@ -371,10 +371,13 @@
             return           { label: '👴 Senior (WHO BMI standard)',        cls: 'badge-senior' };
         }
 
+        let bmiDebounceTimer = null;
+
         function updateBmiPreview() {
-            const w = parseFloat(weightInput.value);
-            const h = parseFloat(heightInput.value);
-            const age = parseInt(ageInput?.value);
+            const w      = parseFloat(weightInput.value);
+            const h      = parseFloat(heightInput.value);
+            const age    = parseInt(ageInput?.value);
+            const gender = genderSelect?.value || 'MALE';
 
             // Show age group badge
             const ut = getUserType(age);
@@ -386,10 +389,25 @@
                 ageTypeBadge.style.display = 'none';
             }
 
-            if (w > 0 && h > 0) {
-                const bmi = (w / ((h / 100) ** 2)).toFixed(1);
-                bmiValueEl.textContent = bmi;
-                bmiPreview.style.display = 'flex';
+            if (w > 0 && h > 0 && age > 0) {
+                // Debounce API call by 400ms
+                clearTimeout(bmiDebounceTimer);
+                bmiDebounceTimer = setTimeout(() => {
+                    const params = new URLSearchParams({ weight: w, height: h, age: age, gender: gender });
+                    fetch('/api/nutrition/bmi?' + params)
+                        .then(res => res.json())
+                        .then(data => {
+                            bmiValueEl.textContent = data.bmi
+                                ? `${data.bmi} — ${data.bmiCategory || ''}`
+                                : (w / ((h / 100) ** 2)).toFixed(1);
+                            bmiPreview.style.display = 'flex';
+                        })
+                        .catch(() => {
+                            // Fallback: client-side calculation
+                            bmiValueEl.textContent = (w / ((h / 100) ** 2)).toFixed(1);
+                            bmiPreview.style.display = 'flex';
+                        });
+                }, 400);
             } else {
                 bmiPreview.style.display = 'none';
             }
@@ -398,6 +416,33 @@
         weightInput?.addEventListener('input', updateBmiPreview);
         heightInput?.addEventListener('input', updateBmiPreview);
         ageInput?.addEventListener('input', updateBmiPreview);
+        genderSelect?.addEventListener('change', updateBmiPreview);
+
+        /**
+         * Helper: Fetch food recommendations using REAL user values.
+         * Always call this function instead of calling the API directly,
+         * so weight & height are always included.
+         */
+        function fetchFoodRecommendations(bmiCategory) {
+            const w      = parseFloat(weightInput.value) || 0;
+            const h      = parseFloat(heightInput.value) || 0;
+            const age    = parseInt(ageInput?.value)     || 0;
+            const gender = genderSelect?.value           || 'MALE';
+
+            if (!w || !h || !age) {
+                console.warn('fetchFoodRecommendations: missing weight, height or age.');
+                return Promise.reject('Missing inputs');
+            }
+
+            const params = new URLSearchParams({
+                bmiCategory,
+                age,
+                gender,
+                weight: w,
+                height: h
+            });
+            return fetch('/api/nutrition/foods?' + params).then(r => r.json());
+        }
 
         // Form submit loading state
         document.getElementById('nutritionForm')?.addEventListener('submit', function() {
