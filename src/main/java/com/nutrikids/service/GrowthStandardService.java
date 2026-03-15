@@ -94,11 +94,24 @@ public class GrowthStandardService {
     }
 
     /**
-     * Get BMI-for-age percentile (approximate)
+     * Get BMI-for-age percentile (approximate).
+     * For adults (18+) returns a mapped 0-100 value representing their position
+     * relative to the WHO healthy range (18.5–24.9) for UI compatibility.
      */
     public double getBmiPercentile(double bmi, int ageYears, String gender) {
+        if (ageYears >= 18) {
+            // Adults: map WHO BMI thresholds to a 0-100 UI scale
+            if (bmi < 16.0)  return 2;
+            if (bmi < 17.0)  return 5;
+            if (bmi < 18.5)  return 12;
+            if (bmi < 21.7)  return 50;   // mid-healthy
+            if (bmi < 24.9)  return 75;
+            if (bmi < 27.5)  return 85;
+            if (bmi < 30.0)  return 92;
+            if (bmi < 35.0)  return 97;
+            return 99;
+        }
         if (ageYears < 2) {
-            // For children under 2, use weight-for-length
             return estimatePercentileUnder2(bmi, ageYears, gender);
         }
 
@@ -144,26 +157,29 @@ public class GrowthStandardService {
     }
 
     /**
-     * Get BMI category based on age-specific percentile (CDC guidelines)
+     * Get BMI category.
+     * Adults (18+): WHO absolute BMI thresholds.
+     * Children: CDC age-specific percentile thresholds.
      */
-    public String getBmiCategory(double bmiPercentile, int ageYears) {
-        if (ageYears < 2) {
-            // For under 2, use weight-for-length
-            if (bmiPercentile < 5)
-                return "Underweight";
-            if (bmiPercentile < 85)
-                return "Normal Weight";
-            if (bmiPercentile < 95)
-                return "Overweight";
+    public String getBmiCategory(double bmiValue, int ageYears) {
+        if (ageYears >= 18) {
+            // WHO adult thresholds (bmiValue is the actual BMI here for adults)
+            if (bmiValue < 18.5) return "Underweight";
+            if (bmiValue < 25.0) return "Healthy Weight";
+            if (bmiValue < 30.0) return "Overweight";
             return "Obese";
         }
-        // CDC categories for 2-20 years
-        if (bmiPercentile < 5)
-            return "Underweight";
-        if (bmiPercentile < 85)
-            return "Healthy Weight";
-        if (bmiPercentile < 95)
-            return "Overweight";
+        // For children we receive a percentile value
+        double bmiPercentile = bmiValue;
+        if (ageYears < 2) {
+            if (bmiPercentile < 5)  return "Underweight";
+            if (bmiPercentile < 85) return "Normal Weight";
+            if (bmiPercentile < 95) return "Overweight";
+            return "Obese";
+        }
+        if (bmiPercentile < 5)  return "Underweight";
+        if (bmiPercentile < 85) return "Healthy Weight";
+        if (bmiPercentile < 95) return "Overweight";
         return "Obese";
     }
 
@@ -181,69 +197,89 @@ public class GrowthStandardService {
     }
 
     /**
-     * Get optimal weight for age and gender (WHO standard)
+     * Get optimal weight for age and gender.
+     * Adults: back-calculated from ideal BMI of 22 and average height.
      */
     public double getOptimalWeight(int ageYears, String gender) {
+        if (ageYears >= 18) {
+            double h = getOptimalHeight(ageYears, gender) / 100.0;
+            return Math.round(22.0 * h * h * 10.0) / 10.0;
+        }
         int idx = Math.min(ageYears - 1, 17);
         return gender.equalsIgnoreCase("MALE") ? BOYS_AVG_WEIGHT[idx] : GIRLS_AVG_WEIGHT[idx];
     }
 
     /**
-     * Get optimal height for age and gender (WHO standard)
+     * Get optimal / average height for age and gender.
+     * Adults: use typical adult heights.
      */
     public double getOptimalHeight(int ageYears, String gender) {
+        if (ageYears >= 18) {
+            // Average adult heights (approximate)
+            return gender.equalsIgnoreCase("MALE") ? 175.0 : 163.0;
+        }
         int idx = Math.min(ageYears - 1, 17);
         return gender.equalsIgnoreCase("MALE") ? BOYS_AVG_HEIGHT[idx] : GIRLS_AVG_HEIGHT[idx];
     }
 
     /**
-     * Determine overall growth status
+     * Determine overall health/growth status.
+     * For adults the bmiPercentile parameter carries the mapped scale value.
      */
     public String getGrowthStatus(double bmiPercentile, double heightCm, double optimalHeight, int ageYears) {
         double heightRatio = (heightCm / optimalHeight) * 100;
-        boolean stunted = heightRatio < 90; // Below 90% of expected height
 
-        if (bmiPercentile < 5 && stunted)
-            return "Severely Malnourished";
-        if (bmiPercentile < 5)
-            return "Underweight";
-        if (stunted)
-            return "Stunted Growth";
-        if (bmiPercentile >= 95)
+        if (ageYears >= 18) {
+            // Use mapped percentile scale for adults
+            if (bmiPercentile < 5)  return "Severely Underweight";
+            if (bmiPercentile < 12) return "Underweight";
+            if (bmiPercentile <= 75) return "Healthy Weight";
+            if (bmiPercentile <= 85) return "Slightly Overweight";
+            if (bmiPercentile <= 92) return "Overweight";
             return "Obese";
-        if (bmiPercentile >= 85)
-            return "Overweight";
-        if (bmiPercentile <= 25 && heightRatio >= 95)
-            return "Lean &amp; Tall";
+        }
+
+        boolean stunted = heightRatio < 90;
+        if (bmiPercentile < 5 && stunted) return "Severely Malnourished";
+        if (bmiPercentile < 5)  return "Underweight";
+        if (stunted)            return "Stunted Growth";
+        if (bmiPercentile >= 95) return "Obese";
+        if (bmiPercentile >= 85) return "Overweight";
+        if (bmiPercentile <= 25 && heightRatio >= 95) return "Lean & Tall";
         return "Normal Growth";
     }
 
     /**
-     * Generate BMI interpretation text
+     * Generate BMI interpretation text for any age group.
      */
-    public String getBmiInterpretation(String category, double bmiPercentile, int ageYears, String gender) {
-        String ageContext = ageYears <= 5 ? "young child" : ageYears <= 12 ? "child" : "adolescent";
+    public String getBmiInterpretation(String category, double bmi, int ageYears, String gender) {
+        boolean isAdult = ageYears >= 18;
+        boolean isSenior = ageYears >= 60;
+        String who = isAdult ? (isSenior ? "person aged " + ageYears : "adult") :
+                     ageYears <= 5 ? "young child" : ageYears <= 12 ? "child" : "adolescent";
+
         return switch (category) {
-            case "Underweight" -> String.format(
-                    "Your child's BMI is at the %.0fth percentile, which means they weigh less than 95%% of %ss " +
-                            "of the same age and gender. This may indicate insufficient calorie or nutrient intake. " +
-                            "Increasing nutrient-dense foods and consult with a pediatrician is recommended.",
-                    bmiPercentile, ageContext);
-            case "Healthy Weight", "Normal Weight" -> String.format(
-                    "Excellent! Your child's BMI is at the %.0fth percentile, which is within the healthy range. " +
-                            "Continue maintaining a balanced diet and regular physical activity to support healthy growth.",
-                    bmiPercentile);
-            case "Overweight" -> String.format(
-                    "Your child's BMI is at the %.0fth percentile, which is above the healthy range for their age. " +
-                            "Focus on whole foods, reduce processed food intake, and encourage daily physical activity. "
-                            +
-                            "A healthcare provider consultation is advised.",
-                    bmiPercentile);
-            case "Obese" -> String.format(
-                    "Your child's BMI is at the %.0fth percentile, which indicates obesity for their age group. " +
-                            "Medical consultation is strongly recommended. Significant dietary changes and increased " +
-                            "physical activity are needed under professional supervision.",
-                    bmiPercentile);
+            case "Underweight" -> isAdult
+                ? String.format("Your BMI of %.1f is below 18.5, which falls in the Underweight range. " +
+                        "This may indicate insufficient calorie and protein intake. " +
+                        "Nutrient-dense whole foods and a consultation with a dietitian are recommended.", bmi)
+                : String.format("Your child's BMI is at the %.0fth percentile, below healthy range for a %s. " +
+                        "Increasing nutrient-dense foods and consulting a pediatrician is recommended.", bmi, who);
+            case "Healthy Weight", "Normal Weight" -> isAdult
+                ? String.format("Great! Your BMI of %.1f falls within the healthy range (18.5–24.9). " +
+                        "Maintain a balanced diet and stay physically active to sustain this.", bmi)
+                : String.format("Excellent! Your child's BMI percentile is within the healthy range (5th–85th). " +
+                        "Continue maintaining a balanced diet and regular physical activity.", bmi);
+            case "Overweight" -> isAdult
+                ? String.format("Your BMI of %.1f (25.0–29.9) is in the Overweight range. " +
+                        "Moderate dietary adjustments and increased physical activity (150 min/week) are recommended.", bmi)
+                : String.format("Your child's BMI is above the healthy range (85th–95th percentile). " +
+                        "Focus on whole foods, reduce processed intake, and encourage daily physical activity.", bmi);
+            case "Obese" -> isAdult
+                ? String.format("Your BMI of %.1f is ≥30.0, which indicates Obesity. " +
+                        "Medical consultation is strongly recommended for a supervised weight management plan.", bmi)
+                : String.format("Your child's BMI is above the 95th percentile, indicating Obesity. " +
+                        "Medical consultation is strongly recommended along with dietary and activity changes.", bmi);
             default -> "BMI assessment complete.";
         };
     }

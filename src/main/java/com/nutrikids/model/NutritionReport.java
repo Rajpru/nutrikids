@@ -8,27 +8,28 @@ import java.util.List;
 @Builder
 public class NutritionReport {
 
-    // Child info
-    private String childName;
+    // User info
+    private String childName;       // kept for template compatibility
     private int ageYears;
     private String gender;
     private double weightKg;
     private double heightCm;
+    private String userType;        // CHILD / ADULT / SENIOR
 
     // BMI Analysis
     private double bmi;
     private String bmiCategory;      // Underweight / Normal / Overweight / Obese
     private String bmiStatus;        // Color code: GREEN, YELLOW, ORANGE, RED
-    private double bmiPercentile;
+    private double bmiPercentile;    // 0-100 for children; mapped value (0/50/75/100) for adults
     private String bmiInterpretation;
 
     // Optimal Comparison
     private double optimalWeightKg;
     private double optimalHeightCm;
     private double optimalBmi;
-    private double weightDifferenceKg; // + means overweight, - means underweight
+    private double weightDifferenceKg;
     private double heightDifferencePercent;
-    private String growthStatus;       // Normal / Stunted / Overweight / Obese / Underweight
+    private String growthStatus;
 
     // Calorie Requirements
     private int dailyCaloriesMin;
@@ -50,7 +51,7 @@ public class NutritionReport {
 
     // Health Tips
     private List<String> healthTips;
-    private List<String> parentingAdvice;
-    private String overallHealthScore; // A+, A, B+, B, C, D
-    private String doctorReferral;     // Whether medical consultation is recommended
+    private List<String> parentingAdvice;   // reused as "lifestyle advice"
+    private String overallHealthScore;
+    private String doctorReferral;
 }

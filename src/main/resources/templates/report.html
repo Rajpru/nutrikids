@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="'NutriKids Report - ' + ${report.childName}">NutriKids - Nutrition Report</title>
+    <title th:text="'NutriScan Report - ' + ${report.childName}">NutriScan - Nutrition Report</title>
     <meta name="description"
         content="Personalized child nutrition report with BMI analysis, food recommendations and diet plan.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,8 +20,8 @@
     <!-- Navbar -->
     <nav class="navbar">
         <a href="/" class="nav-brand">
-            <span class="logo-icon">🥦</span>
-            <span class="logo-text">NutriKids</span>
+            <span class="logo-icon">🥗</span>
+            <span class="logo-text">NutriScan</span>
         </a>
         <a href="/" class="btn-nav">← New Analysis</a>
     </nav>
@@ -32,7 +32,9 @@
         <div class="report-header">
             <div class="report-header-content">
                 <div class="child-avatar">
-                    <span th:text="${report.gender == 'MALE' ? '👦' : '👧'}">👦</span>
+                    <span th:if="${report.userType == 'CHILD'}"  th:text="${report.gender == 'MALE' ? '👦' : '👧'}">👦</span>
+                    <span th:if="${report.userType == 'SENIOR'}" th:text="${report.gender == 'MALE' ? '👴' : '👵'}">👴</span>
+                    <span th:if="${report.userType == 'ADULT' or report.userType == null}" th:text="${report.gender == 'MALE' ? '🧑' : '👩'}">🧑</span>
                 </div>
                 <div class="child-info">
                     <h1 th:text="${report.childName + &quot;'s Nutrition Report&quot;}">Report</h1>
@@ -211,7 +213,7 @@
         <section class="report-section">
             <div class="section-title">
                 <span class="section-icon">⭐</span>
-                <h2>Superfoods for Your Child</h2>
+                <h2>Superfoods Recommended for You</h2>
             </div>
             <div class="food-grid" id="superfoods-grid">
                 <div th:each="food : ${report.superfoodsForChild}" class="food-card superfood-card">
@@ -241,7 +243,7 @@
             <div class="section-title">
                 <span class="section-icon">✅</span>
                 <h2>Recommended Foods</h2>
-                <span class="section-badge">Personalized for your child</span>
+                <span class="section-badge">Personalized for your profile</span>
             </div>
             <div class="food-grid">
                 <div th:each="food : ${report.recommendedFoods}" class="food-card rec-card">
@@ -439,7 +441,7 @@
         <section class="report-section">
             <div class="section-title">
                 <span class="section-icon">👨‍👩‍👧</span>
-                <h2>Parenting Nutrition Advice</h2>
+            <h2>Health &amp; Lifestyle Advice</h2>
             </div>
             <div class="advice-grid">
                 <div th:each="advice : ${report.parentingAdvice}" class="advice-card">
@@ -452,7 +454,7 @@
         <div class="report-cta">
             <a href="/" class="btn-submit"
                 style="text-decoration:none; display:inline-flex; gap:8px; align-items:center;">
-                <span>Analyze Another Child</span> <span>🔄</span>
+                <span>New Analysis</span> <span>🔄</span>
             </a>
             <button onclick="window.print()" class="btn-print">🖨️ Print Report</button>
         </div>
@@ -463,7 +465,7 @@
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
-                <div class="footer-brand"><span class="logo-icon">🥦</span><span class="logo-text">NutriKids</span>
+                <div class="footer-brand"><span class="logo-icon">🥗</span><span class="logo-text">NutriScan</span>
                 </div>
                 <p class="footer-disclaimer">Based on WHO & CDC Growth Standards. Not a substitute for medical advice.
                 </p>
